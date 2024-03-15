@@ -8,3 +8,4 @@ type Product struct {
 	Image []byte
 	Reviews []string
 }
+
