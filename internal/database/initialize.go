@@ -27,10 +27,10 @@ func NewConn() (DB, error){
 
 func init() {
 	db, err := sql.Open("sqlite3", "project.db")
-	defer db.Close()
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 
 	_, err = db.Exec(`
 	create table if not exists products(
@@ -41,8 +41,10 @@ func init() {
 );
 	create table if not exists users (
 		id int primary key,
-		username varchar(50),
-		password varchar(50)
+		username varchar(50) unique not null,
+		password varchar(50) not null,
+		email unique not null,
+		address unique not null
 	);
 `)
 
