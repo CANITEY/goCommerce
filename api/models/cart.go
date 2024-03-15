@@ -1,6 +1,6 @@
 package models
 
 type Cart struct {
-	Products []Product
+	Products   []Product
 	TotalPrice float32
 }
