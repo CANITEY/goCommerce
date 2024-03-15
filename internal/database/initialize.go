@@ -7,8 +7,27 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+
+type DB struct {
+	conn *sql.DB
+}
+
+func NewConn() (DB, error){
+	db, err := sql.Open("sqlite3", "project.db")
+	if err != nil {
+		return DB{}, err
+	}
+	dataConn := DB{
+		db,
+	}
+
+	return dataConn, nil
+}
+
+
 func init() {
 	db, err := sql.Open("sqlite3", "project.db")
+	defer db.Close()
 	if err != nil {
 		panic(err)
 	}
@@ -33,4 +52,5 @@ func init() {
 
 	fmt.Println("Database and tables are present")
 }
+
 
