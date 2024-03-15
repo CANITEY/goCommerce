@@ -2,15 +2,10 @@ package database
 
 import (
 	"ecommerce/api/models"
-
 )
-
-
 
 func (d DB) GetProduct(id int) (*models.Product, error) {
 	product := new(models.Product)
-
-
 	row := d.conn.QueryRow("SELECT * FROM products where id=?", id)
 	if err := row.Scan(&product.ID, &product.Name, &product.Description, &product.Price); err != nil {
 		return nil, err
@@ -41,5 +36,4 @@ func (d DB) GetProducts() ([]models.Product, error) {
 	}
 
 	return products, err
-
 }
