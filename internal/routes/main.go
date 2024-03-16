@@ -23,7 +23,12 @@ func init() {
 		panic(err)
 	}
 
+	// adding static fileServer
 	r := mux.NewRouter()
+	r.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir("web/static/js"))))
+	r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("web/static/css"))))
+
+
 	r.HandleFunc("/", home)
 	r.HandleFunc("/products", products)
 	r.HandleFunc("/products/{id}", product)
