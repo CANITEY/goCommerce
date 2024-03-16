@@ -3,6 +3,9 @@ Products
 {{ end }}
 {{ define "extend" }}
 <div class="mt-4 d-flex justify-content-between">
+    {{ if not . }}
+        <h2>There is no products till now</h2>
+    {{ end }}
     {{ range . }}
     <div class="card" style="width: 18rem;">
         <img src="https://placehold.co/600x400" class="card-img-top" alt="...">
