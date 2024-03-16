@@ -40,7 +40,9 @@ func auth(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	err = t.ExecuteTemplate(w, "base", "Hello world!")
+
+	message := r.URL.Query().Get("message")
+	err = t.ExecuteTemplate(w, "base", message)
 	if err != nil {
 		log.Println(err)
 	}
