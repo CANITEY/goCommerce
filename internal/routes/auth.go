@@ -23,6 +23,10 @@ func signupView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := d.AddUser(*user); err != nil {
+		if err.Error() == "UNIQUE constraint failed: users.email" {
+			http.Redirect(w, r, fmt.Sprintf("/auth?message=%v", "email used before"), http.StatusFound)
+			return
+		}
 		http.Redirect(w, r, fmt.Sprintf("/auth?message=%v", err), http.StatusFound)
 		return
 	}
