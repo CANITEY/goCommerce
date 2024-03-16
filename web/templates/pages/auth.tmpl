@@ -52,4 +52,20 @@ auth
     </form>
     </div>
 </div>
+<div class="position-absolute bottom-0 start-50 translate-middle-x">
+    <div id="message" class="btn m-5 px-4 py-2 d-none">{{ . }}</div>
+</div>
+<script>
+    let toast = document.getElementById("message")
+    let message = document.location.search.split("=")[1]
+    if (message != undefined) {
+        if (message === "success") {
+            toast.classList.toggle("d-none")
+            toast.classList.toggle("btn-success")
+        } else {
+            toast.classList.toggle("d-none")
+            toast.classList.toggle("btn-danger")
+        }
+    }
+</script>
 {{ end }}
