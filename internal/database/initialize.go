@@ -34,14 +34,12 @@ func init() {
 
 	_, err = db.Exec(`
 	create table if not exists products(
-		id int primary key,
 		name string, 
 		description string, 
 		price numeric(8,2)
 );
 	create table if not exists users (
-		id int primary key,
-		username varchar(50) unique not null,
+		username varchar(50) not null,
 		password varchar(50) not null,
 		email unique not null,
 		address unique not null
