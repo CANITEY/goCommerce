@@ -15,6 +15,7 @@ type User struct {
 	Address  string
 	Phone    string
 	Email    string
+	UUID     string
 }
 
 func NewSignUpUser(form url.Values) (*User, error) {
@@ -41,16 +42,15 @@ func NewSignUpUser(form url.Values) (*User, error) {
 		return nil, errors.New("no phone provided")
 	}
 
-	//validating email
+	// validating email
 	if _, err := mail.ParseAddress(email); err != nil {
 		return nil, err
 	}
-	
 
 	// validating password
 	var (
 		ERRnotApplicable = errors.New("simple password")
-		ERRnotLong = errors.New("short password")
+		ERRnotLong       = errors.New("short password")
 	)
 	validate := validator.New(
 		validator.MinLength(8, ERRnotLong),
