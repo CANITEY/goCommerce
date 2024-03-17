@@ -57,6 +57,10 @@ auth
 </div>
 <script>
     let toast = document.getElementById("message")
+    let hide = function() {
+        this.classList.toggle("d-none")
+    }
+    toast.addEventListener("click", hide)
     let message = document.location.search.split("=")[1]
     if (message != undefined) {
         if (message === "success") {
