@@ -57,7 +57,7 @@ func NewSignUpUser(form url.Values) (*User, error) {
 		validator.ContainsAtLeast("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1, ERRnotApplicable),
 		validator.ContainsAtLeast("abcdefghijklmnopqrstuvwxyz", 1, ERRnotApplicable),
 		validator.ContainsAtLeast("1234567890", 1, ERRnotApplicable),
-		validator.ContainsAtLeast("/+-.:;\"'`<>,{}[]()^%$#@!~", 1, ERRnotApplicable),
+		validator.ContainsAtLeast("/+-.:;\"'`<>,{}[]()^%$#@!~*", 1, ERRnotApplicable),
 	)
 
 	err := validate.Validate(password)
