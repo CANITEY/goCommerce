@@ -6,13 +6,14 @@ import (
 	"github.com/google/uuid"
 )
 
-func (d *DB) CheckUser(email, password string) error {
-	_, err := d.conn.Exec("SELECT email, password FROM users where email=? AND password=?", email, password)
-	if err != nil {
-		return err
+func (d *DB) CheckUser(email, password string) (bool) {
+	data := d.conn.QueryRow("SELECT uuid FROM users where email=? AND password=?", email, password)
+	uuid := ""
+	data.Scan(&uuid)
+	if uuid == "" {
+		return false
 	}
-
-	return nil
+	return true
 }
 
 func (d *DB) AddUser(user models.User) error {
