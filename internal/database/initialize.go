@@ -39,10 +39,12 @@ func init() {
 		price numeric(8,2)
 );
 	create table if not exists users (
-		username varchar(50) not null,
-		password varchar(50) not null,
 		email unique not null,
-		address unique not null
+		password varchar(50) not null,
+		username varchar(50) not null,
+		address varchar(120) unique not null,
+		phone varchar(11) unique not null,
+		uuid varchar(30) unique not null
 	);
 `)
 
