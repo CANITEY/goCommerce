@@ -9,7 +9,9 @@ import (
 func (d *DB) CheckUser(email, password string) (bool) {
 	data := d.conn.QueryRow("SELECT uuid FROM users where email=? AND password=?", email, password)
 	uuid := ""
-	data.Scan(&uuid)
+	if err := data.Scan(&uuid); err != nil {
+		return false
+	}
 	if uuid == "" {
 		return false
 	}
@@ -31,7 +33,7 @@ func (d *DB) AddUser(user models.User) error {
 		return err
 	}
 
-	_, err = d.conn.Exec("INSERT INTO users(email, password, username, address, phone, uuid) VALUES(?,?,?,?,?,?)", user.Username, user.Password, user.Email, user.Address, uid.String())
+	_, err = d.conn.Exec("INSERT INTO users(email, password, username, address, phone, uuid) VALUES(?,?,?,?,?,?)", user.Email, user.Password, user.Username, user.Address, user.Phone, uid.String())
 	if err != nil {
 		return err
 	}
@@ -41,7 +43,8 @@ func (d *DB) AddUser(user models.User) error {
 func (d *DB) GetUser(email string) (*models.User, error) {
 	user := new(models.User)
 	row := d.conn.QueryRow("SELECT ROWID, * FROM users where email=?", email)
-	if err := row.Scan(&user.ID, &user.Email, nil, &user.Username, &user.Address, &user.UUID); err != nil {
+	n := ""
+	if err := row.Scan(&user.ID, &user.Email, &n, &user.Username, &user.Address, &user.Phone, &user.UUID); err != nil {
 		return nil, err
 	}
 	return user, nil
