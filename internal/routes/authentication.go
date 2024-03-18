@@ -73,8 +73,7 @@ func loginController(w http.ResponseWriter, r *http.Request) {
 
 func auth(w http.ResponseWriter, r *http.Request) {
 
-	session, _ := Store.Get(r, "session")
-	fmt.Printf("session.Values[\"user\"]: %v\n", session.Values["user"])
+	session, err := Store.Get(r, "session")
 
 	files := []string{
 		"./web/templates/base.tmpl",

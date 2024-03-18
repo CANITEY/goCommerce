@@ -2,19 +2,20 @@ package routes
 
 import (
 	"ecommerce/internal/database"
-	"fmt"
+	"ecommerce/internal/middleware"
 	"log"
 	"net/http"
-	"strconv"
 	"text/template"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/urfave/negroni"
 )
 
 var (
 	d   database.DB
 	err error
+	Store = sessions.NewCookieStore([]byte("VERYSECUREKEY"))
 )
 
 func init() {
@@ -23,20 +24,34 @@ func init() {
 		panic(err)
 	}
 
-	// adding static fileServer
+	sessionStore := middleware.Store{
+		S: Store,
+	}
 	r := mux.NewRouter()
+
+	// adding static fileServer
 	r.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir("web/static/js"))))
 	r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("web/static/css"))))
 
-
+	// public endpoints
 	r.HandleFunc("/", home)
 	r.HandleFunc("/products", products)
 	r.HandleFunc("/products/{id}", product)
 	r.HandleFunc("/auth", auth).Methods("GET")
-	r.HandleFunc("/signup", signupView).Methods("post")
+	r.HandleFunc("/signup", signupController).Methods("POST")
+	r.HandleFunc("/login", loginController).Methods("POST")
 
-	r.HandleFunc("/profile", profile)
-	r.HandleFunc("/cart", cart)
+	// protected endpoints
+	protectedRouter := mux.NewRouter()
+	protectedRouter.HandleFunc("/profile", profile)
+	protectedRouter.HandleFunc("/cart", cart)
+	protectedMiddle := negroni.New()
+	protectedMiddle.Use(&sessionStore)
+	protectedMiddle.UseHandler(protectedRouter)
+
+
+	r.PathPrefix("/").Handler(protectedMiddle)
+
 
 	n := negroni.New(negroni.NewLogger())
 	n.UseHandler(r)
@@ -44,6 +59,7 @@ func init() {
 		log.Fatalln(err)
 	}
 }
+
 
 func home(w http.ResponseWriter, r *http.Request) {
 	files := []string{
@@ -62,55 +78,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func products(w http.ResponseWriter, r *http.Request) {
-	products, err := d.GetProducts()
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintln(w, "500 Internal Error")
-	}
-	files := []string{
-		"./web/templates/base.tmpl",
-		"./web/templates/partials/nav.tmpl",
-		"./web/templates/pages/products.tmpl",
-	}
-	t, err := template.ParseFiles(files...)
-	if err != nil {
-		panic(err)
-	}
-	err = t.ExecuteTemplate(w, "base", products)
-	if err != nil {
-		log.Println(err)
-	}
-}
-
-func product(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	id, err := strconv.Atoi(params["id"])
-	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintln(w, "Enter correct id")
-	}
-	product, err := d.GetProduct(id)
-	if err != nil {
-		w.WriteHeader(404)
-		fmt.Fprintln(w, "Product not found")
-		return
-	}
-
-	files := []string{
-		"./web/templates/base.tmpl",
-		"./web/templates/partials/nav.tmpl",
-		"./web/templates/pages/product.tmpl",
-	}
-	t, err := template.ParseFiles(files...)
-	if err != nil {
-		panic(err)
-	}
-	err = t.ExecuteTemplate(w, "base", product)
-	if err != nil {
-		panic(err)
-	}
-}
 
 func profile(w http.ResponseWriter, r *http.Request) {
 	files := []string{
