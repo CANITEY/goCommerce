@@ -2,12 +2,17 @@ package routes
 
 import (
 	"ecommerce/api/models"
-	"ecommerce/internal/jwt"
+	"encoding/gob"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+
 )
+
+func init() {
+	gob.Register(&models.User{})
+}
 
 func signupController(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
@@ -51,24 +56,26 @@ func loginController(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	token, err := jwt.GenerateJWT(user.UUID)
+
+	session, err := Store.Get(r, "session")
 	if err != nil {
 		http.Redirect(w, r, "/auth?message=an error happened in backend system", http.StatusFound)
-		fmt.Println(err, "UUID")
 		return
 	}
-
-	cookie := http.Cookie{
-		Name:  "session",
-		Value: token,
-		Path:  "/",
+	session.Values["user"] = user
+	fmt.Println(session.Values["user"])
+	if err := session.Save(r, w); err != nil {
+		panic(err)
 	}
-
-	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, "/profile", http.StatusMovedPermanently)
+	fmt.Println("SUCESS")
+	http.Redirect(w, r, "/profile", http.StatusFound)
 }
 
 func auth(w http.ResponseWriter, r *http.Request) {
+
+	session, _ := Store.Get(r, "session")
+	fmt.Printf("session.Values[\"user\"]: %v\n", session.Values["user"])
+
 	files := []string{
 		"./web/templates/base.tmpl",
 		"./web/templates/partials/nav.tmpl",
