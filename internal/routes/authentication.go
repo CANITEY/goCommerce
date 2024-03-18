@@ -63,17 +63,13 @@ func loginController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	session.Values["user"] = user
-	fmt.Println(session.Values["user"])
 	if err := session.Save(r, w); err != nil {
 		panic(err)
 	}
-	fmt.Println("SUCESS")
 	http.Redirect(w, r, "/profile", http.StatusFound)
 }
 
 func auth(w http.ResponseWriter, r *http.Request) {
-
-	session, err := Store.Get(r, "session")
 
 	files := []string{
 		"./web/templates/base.tmpl",

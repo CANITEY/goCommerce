@@ -11,7 +11,7 @@ type Store struct {
 }
 
 func (s *Store)ServeHTTP(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	_, err := s.S.Get(r, "session")
+	session, err := s.S.Get(r, "session")
 	if err != nil {
 		http.Redirect(w, r, "/auth", http.StatusTemporaryRedirect)
 		return
@@ -19,6 +19,11 @@ func (s *Store)ServeHTTP(w http.ResponseWriter, r *http.Request, next http.Handl
 
 
 	if err != nil {
+		http.Redirect(w, r, "/auth", http.StatusTemporaryRedirect)
+		return
+	}
+
+	if  len(session.Values) == 0 {
 		http.Redirect(w, r, "/auth", http.StatusTemporaryRedirect)
 		return
 	}
