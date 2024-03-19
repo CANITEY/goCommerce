@@ -37,3 +37,27 @@ func (d DB) GetProducts() ([]models.Product, error) {
 
 	return products, err
 }
+
+func (d DB) Search(term string) ([]models.Product, error) {
+	rows, err := d.conn.Query("SELECT * FROM products where Name LIKE %?%", term)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var products []models.Product
+
+	for rows.Next() {
+		var product models.Product
+		if err := rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price); err != nil {
+			return products, err
+		}
+		products = append(products, product)
+	}
+
+	if err = rows.Err(); err != nil {
+		return products, err
+	}
+
+	return products, err
+}

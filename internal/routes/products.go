@@ -30,6 +30,30 @@ func products(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func search(w http.ResponseWriter, r *http.Request) {
+	term := r.URL.Query().Get("q")
+	products, err := d.Search(term)
+	
+	if err != nil {
+		http.Error(w, "Some thing wrong happened", 500)
+		return
+	}
+
+	files := []string{
+		"./web/templates/base.tmpl",
+		"./web/templates/partials/nav.tmpl",
+		"./web/templates/pages/products.tmpl",
+	}
+	t, err := template.ParseFiles(files...)
+	if err != nil {
+		panic(err)
+	}
+	err = t.ExecuteTemplate(w, "base", products)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func product(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
