@@ -9,7 +9,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"github.com/urfave/negroni"
 )
 
 var (
@@ -37,27 +36,22 @@ func init() {
 	r.HandleFunc("/", home)
 	r.HandleFunc("/products", products)
 	r.HandleFunc("/products/{id}", product)
-	r.HandleFunc("/auth", auth).Methods("GET")
-	r.HandleFunc("/signup", signupController).Methods("POST")
-	r.HandleFunc("/login", loginController).Methods("POST")
+
+	// authentication
+	authRouter := r.PathPrefix("/").Subrouter()
+	authRouter.HandleFunc("/auth", auth)	
+	authRouter.HandleFunc("/signup", signupController).Methods("POST")
+	authRouter.HandleFunc("/login", loginController).Methods("POST")
+	authRouter.Use(sessionStore.AuthBlock)
 
 	// protected endpoints
-	protectedRouter := mux.NewRouter()
+	protectedRouter := r.PathPrefix("/").Subrouter()
 	protectedRouter.HandleFunc("/profile", profile)
 	protectedRouter.HandleFunc("/cart", cart)
-	protectedMiddle := negroni.New()
-	protectedMiddle.Use(&sessionStore)
-	protectedMiddle.UseHandler(protectedRouter)
+	protectedRouter.Use(sessionStore.EnsureLoggedIn)
 
+	http.ListenAndServe(":8888", r)
 
-	r.PathPrefix("/").Handler(protectedMiddle)
-
-
-	n := negroni.New(negroni.NewLogger())
-	n.UseHandler(r)
-	if err := http.ListenAndServe(":8888", n); err != nil {
-		log.Fatalln(err)
-	}
 }
 
 

@@ -77,6 +77,7 @@ func auth(w http.ResponseWriter, r *http.Request) {
 		"./web/templates/pages/auth.tmpl",
 	}
 
+
 	t, err := template.ParseFiles(files...)
 	if err != nil {
 		panic(err)
