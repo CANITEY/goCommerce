@@ -38,6 +38,7 @@ func init() {
 	r.HandleFunc("/", home)
 	r.HandleFunc("/products", products)
 	r.HandleFunc("/products/{id}", product)
+	r.HandleFunc("/search", search)
 
 	// authentication
 	authRouter := r.PathPrefix("/").Subrouter()
@@ -50,10 +51,13 @@ func init() {
 	protectedRouter := r.PathPrefix("/").Subrouter()
 	protectedRouter.HandleFunc("/profile", profile)
 	protectedRouter.HandleFunc("/cart", cart)
+	protectedRouter.HandleFunc("/logout", logoutController)
 	protectedRouter.Use(sessionStore.EnsureLoggedIn)
 
 	logged := handlers.LoggingHandler(os.Stdout, r)
-	http.ListenAndServe(":8888", logged)
+	if err := http.ListenAndServe(":8888", logged); err != nil {
+		panic(err)
+	}
 
 }
 

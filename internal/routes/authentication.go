@@ -89,3 +89,15 @@ func auth(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 }
+
+func logoutController(w http.ResponseWriter, r *http.Request) {
+	session, err := Store.Get(r, "session")
+	if err != nil {
+		http.Redirect(w, r, "/auth", 302)
+		return
+	}
+	session.Options.MaxAge = -1
+	session.Save(r, w)
+	http.Redirect(w, r, "/", 302)
+
+}
