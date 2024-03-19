@@ -5,8 +5,10 @@ import (
 	"ecommerce/internal/middleware"
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 )
@@ -50,7 +52,8 @@ func init() {
 	protectedRouter.HandleFunc("/cart", cart)
 	protectedRouter.Use(sessionStore.EnsureLoggedIn)
 
-	http.ListenAndServe(":8888", r)
+	logged := handlers.LoggingHandler(os.Stdout, r)
+	http.ListenAndServe(":8888", logged)
 
 }
 
