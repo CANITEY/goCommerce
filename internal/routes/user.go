@@ -7,6 +7,12 @@ import (
 )
 
 func profile(w http.ResponseWriter, r *http.Request) {
+	session, err := Store.Get(r, "session")
+	if err != nil {
+		panic(err)
+	}
+
+	user := session.Values["user"]
 	files := []string{
 		"./web/templates/base.tmpl",
 		"./web/templates/partials/nav.tmpl",
@@ -16,7 +22,7 @@ func profile(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	err = t.ExecuteTemplate(w, "base", "Hello world!")
+	err = t.ExecuteTemplate(w, "base", user)
 	if err != nil {
 		log.Println(err)
 	}

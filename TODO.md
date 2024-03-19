@@ -9,8 +9,9 @@
 - [x] session handling
 - [x] create authentication function
 - [x] make pages check for authentication
-- [ ] make a middleware for authorization
+- [x] make a middleware for authorization
     the authoriztion algorithm will check if the user is authorized and check if the cookie makes sense, if so it will procceed the protected parts, if not it will redirect to /auth
+- [x] print data dynamically in profile
 
 ## UI
 - [ ] make admin panel
