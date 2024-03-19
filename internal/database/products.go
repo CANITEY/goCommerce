@@ -39,7 +39,7 @@ func (d DB) GetProducts() ([]models.Product, error) {
 }
 
 func (d DB) Search(term string) ([]models.Product, error) {
-	rows, err := d.conn.Query("SELECT * FROM products where Name LIKE %?%", term)
+	rows, err := d.conn.Query("SELECT * FROM products where name LIKE '%?%'", term)
 	if err != nil {
 		return nil, err
 	}
