@@ -15,7 +15,7 @@ func (d DB) GetProduct(id int) (*models.Product, error) {
 }
 
 func (d DB) GetProducts() ([]models.Product, error) {
-	rows, err := d.conn.Query("SELECT * FROM products")
+	rows, err := d.conn.Query("SELECT rowid, * FROM products")
 	if err != nil {
 		return nil, err
 	}
@@ -60,4 +60,13 @@ func (d DB) Search(term string) ([]models.Product, error) {
 	}
 
 	return products, err
+}
+
+func (d DB) DeleteProduct(id uint) (bool, error) {
+	_, err := d.conn.Exec("DELETE from products where rowid=?", id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

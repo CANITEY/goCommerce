@@ -39,7 +39,9 @@ func init() {
 	r.HandleFunc("/products", products)
 	r.HandleFunc("/products/{id}", product)
 	r.HandleFunc("/search", search)
+
 	r.HandleFunc("/admin", adminPanel)
+	r.HandleFunc("/admin/products/{action}/{id}", adminProducts)
 
 	// authentication
 	authRouter := r.PathPrefix("/").Subrouter()
