@@ -45,6 +45,7 @@ func init() {
 	r.HandleFunc("/admin/products/{action}/{id}", adminProducts)
 	r.HandleFunc("/admin/products/{action}", adminProducts)
 	r.HandleFunc("/admin/products/{action}", adminProducts).Methods(http.MethodPost)
+	r.HandleFunc("/admin/users", adminUsers)
 
 	// authentication
 	authRouter := r.PathPrefix("/").Subrouter()

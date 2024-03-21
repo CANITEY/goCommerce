@@ -40,6 +40,23 @@ func (d *DB) AddUser(user models.User) error {
 	return nil
 }
 
+func (d *DB) GetUsers() ([]models.User, error) {
+	users := []models.User{}
+	rows, err := d.conn.Query("SELECT ROWID, * FROM users")
+	if err != nil {
+		return nil, err
+	}
+	user := models.User{}
+	for rows.Next() {
+		if err := rows.Scan(&user.ID, &user.Email, &user.Password,&user.Username, &user.Address, &user.Phone, &user.UUID); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
 func (d *DB) GetUser(email string) (*models.User, error) {
 	user := new(models.User)
 	row := d.conn.QueryRow("SELECT ROWID, * FROM users where email=?", email)

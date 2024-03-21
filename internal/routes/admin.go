@@ -143,3 +143,25 @@ func adminProducts(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func adminUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := d.GetUsers()
+	if err != nil {
+		panic(err)
+	}
+	files := []string{
+		"./web/templates/base.tmpl",
+		"./web/templates/partials/nav.tmpl",
+		"./web/templates/pages/admin.tmpl",
+		"./web/templates/pages/admin/users.tmpl",
+	}
+	t, err := template.ParseFiles(files...)
+	if err != nil {
+		panic(err)
+	}
+
+	err = t.ExecuteTemplate(w, "base", users)
+	if err != nil {
+		log.Println(err)
+	}
+
+}
