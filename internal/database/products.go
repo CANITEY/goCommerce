@@ -6,7 +6,7 @@ import (
 
 func (d DB) GetProduct(id int) (*models.Product, error) {
 	product := new(models.Product)
-	row := d.conn.QueryRow("SELECT * FROM products where id=?", id)
+	row := d.conn.QueryRow("SELECT rowid, * FROM products where rowid=?", id)
 	if err := row.Scan(&product.ID, &product.Name, &product.Description, &product.Price); err != nil {
 		return nil, err
 	}
@@ -68,5 +68,20 @@ func (d DB) DeleteProduct(id uint) (bool, error) {
 		return false, err
 	}
 
+	return true, nil
+}
+
+func (d DB) ModifyProduct(product models.Product) (bool, error) {
+	if product.ID == 0 {
+		_, err := d.conn.Exec("INSERT INTO products VALUES(?, ?, ?)", product.Name, product.Description, product.Price)
+		if err != nil {
+			return false, err
+		}
+	} else {
+		_, err := d.conn.Exec("UPDATE products SET name=?, description=?, price=? WHERE id=?", product.Name, product.Description, product.Price, product.ID)
+		if err != nil {
+			return false, err
+		}
+	}
 	return true, nil
 }

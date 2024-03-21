@@ -28,7 +28,7 @@ func init() {
 	sessionStore := middleware.Store{
 		S: Store,
 	}
-	r := mux.NewRouter()
+	r := mux.NewRouter().StrictSlash(true)
 
 	// adding static fileServer
 	r.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir("web/static/js"))))
@@ -41,7 +41,10 @@ func init() {
 	r.HandleFunc("/search", search)
 
 	r.HandleFunc("/admin", adminPanel)
+	r.HandleFunc("/admin/products", adminProducts)
 	r.HandleFunc("/admin/products/{action}/{id}", adminProducts)
+	r.HandleFunc("/admin/products/{action}", adminProducts)
+	r.HandleFunc("/admin/products/{action}", adminProducts).Methods(http.MethodPost)
 
 	// authentication
 	authRouter := r.PathPrefix("/").Subrouter()
