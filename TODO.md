@@ -14,11 +14,18 @@
 - [x] print data dynamically in profile
 
 ## UI
-- [ ] make admin panel
+- [x] make admin panel, where admin can
+    - [x] add products
+        - [x] modify 
+        - [x] remove
+    - [x] remove users
+    - [x] check users personal data >:D
 - [x] add javascript to hide toast when clicked
 
 ## misc
-- [ ] make search function
+- [x] make search function
+    - [x] make search database logic
+    - [x] make search interface
 
 ## Security solution
 - [ ] add crypto mining script XD
